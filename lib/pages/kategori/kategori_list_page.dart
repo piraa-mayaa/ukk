@@ -1,83 +1,65 @@
 import 'package:flutter/material.dart';
-import '../../widgets/kategori_card.dart';
 
-class KategoriListPage extends StatelessWidget {
-  const KategoriListPage({super.key});
+class KategoriCard extends StatelessWidget {
+  final String nama;
+  final String keterangan;
+  final VoidCallback? onEdit;
+  // final VoidCallback? onDelete; // bisa ditambah nanti
+
+  const KategoriCard({
+    super.key,
+    required this.nama,
+    required this.keterangan,
+    this.onEdit,
+    // this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFFFE3B3),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFFFC97C),
-        elevation: 0,
-        title: const Text(
-          'Kategori',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    nama,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    keterangan,
+                    style: TextStyle(
+                      color: Colors.grey[700],
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.edit, color: Colors.orange),
+                  onPressed: onEdit,
+                ),
+                // IconButton(
+                //   icon: const Icon(Icons.delete_outline, color: Colors.red),
+                //   onPressed: onDelete,
+                // ),
+              ],
+            ),
+          ],
         ),
-        iconTheme: const IconThemeData(color: Colors.black),
-      ),
-      body: Column(
-        children: [
-          // SEARCH
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Cari',
-                      prefixIcon: const Icon(Icons.search),
-                      filled: true,
-                      fillColor: const Color(0xFFFFF1D6),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(22),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                InkWell(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/kategori/tambah');
-                  },
-                  child: Container(
-                    width: 42,
-                    height: 42,
-                    decoration: BoxDecoration(
-                      color: Colors.orange,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: const Icon(Icons.add, color: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // LIST
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              children: [
-                KategoriCard(
-                  nama: 'Oscilloscope',
-                  keterangan: 'Alat ukur',
-                  onEdit: () {
-                    Navigator.pushNamed(context, '/kategori/edit');
-                  },
-                ),
-                KategoriCard(
-                  nama: 'Multimeter',
-                  keterangan: 'Alat ukur listrik',
-                  onEdit: () {},
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
