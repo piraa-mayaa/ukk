@@ -34,17 +34,32 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             const SizedBox(height: 80),
 
-            // LOGO
-            const CircleAvatar(
-              radius: 70,
-              backgroundColor: Colors.white,
-              child: Icon(Icons.school,
-                  size: 64, color: Colors.orange),
+            // ================= LOGO GAMBAR =================
+            Container(
+              width: 140,
+              height: 140,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Image.asset(
+                  'assets/logo.png',
+                  fit: BoxFit.contain,
+                ),
+              ),
             ),
 
             const SizedBox(height: 40),
 
-            // CARD LOGIN
+            // ================= CARD LOGIN =================
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(24),
@@ -135,8 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
             const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide:
-              const BorderSide(color: Colors.orange),
+          borderSide: const BorderSide(color: Colors.orange),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),

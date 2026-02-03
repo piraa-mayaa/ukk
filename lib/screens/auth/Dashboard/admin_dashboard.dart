@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(fontFamily: 'Sans-Serif'),
+      theme: ThemeData(fontFamily: 'Poppins'),
       home: const AdminDashboard(),
     );
   }
@@ -23,7 +23,7 @@ class AdminDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9D59B), // Warna kuning header
+      backgroundColor: const Color(0xFFF9D59B), // Warna header (Kuning)
       drawer: _buildDrawer(context),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -34,7 +34,7 @@ class AdminDashboard extends StatelessWidget {
         children: [
           // ================= HEADER: LOGO & PROFIL =================
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -45,15 +45,15 @@ class AdminDashboard extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           
-          // ================= AREA KONTEN PUTIH =================
+          // ================= AREA KONTEN PUTIH (LENGKUNG) =================
           Expanded(
             child: Container(
               width: double.infinity,
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
+                  topLeft: Radius.circular(35),
+                  topRight: Radius.circular(35),
                 ),
               ),
               child: SingleChildScrollView(
@@ -73,7 +73,7 @@ class AdminDashboard extends StatelessWidget {
                       children: [
                         _statCard(Icons.check_circle_outline, '58', 'Alat tersedia', const Color(0xFF2ECC71)),
                         _statCard(Icons.sync, '4', 'Sedang dipinjam', const Color(0xFFF39C12)),
-                        _statCard(Icons.gavel_rounded, '5', 'Alat rusak', const Color(0xFFE74C3C)),
+                        _statCard(Icons.handyman_outlined, '5', 'Alat rusak', const Color(0xFFE74C3C)),
                       ],
                     ),
 
@@ -86,7 +86,7 @@ class AdminDashboard extends StatelessWidget {
                           child: TextField(
                             decoration: InputDecoration(
                               hintText: 'Cari',
-                              prefixIcon: const Icon(Icons.search, size: 20),
+                              prefixIcon: const Icon(Icons.search, size: 22),
                               filled: true,
                               fillColor: const Color(0xFFFDE6B0).withOpacity(0.4),
                               border: OutlineInputBorder(
@@ -109,9 +109,9 @@ class AdminDashboard extends StatelessWidget {
                       ],
                     ),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 25),
 
-                    // ================= LIST PEMINJAMAN =================
+                    // ================= LIST PEMINJAMAN TERBARU (5 DATA) =================
                     const Text(
                       'Peminjaman Terbaru',
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
@@ -121,6 +121,10 @@ class AdminDashboard extends StatelessWidget {
                     _loanCard('Andi Saputra', 'Oscilloscope', '24 April 2024', 'Dipinjam', Colors.green),
                     _loanCard('Budi Santoso', 'Multimeter', '23 April 2024', 'Dipinjam', Colors.green),
                     _loanCard('Deni Pratama', 'Tang Amper', '23 April 2024', 'Menunggu', Colors.orange),
+                    _loanCard('Citra Lestari', 'Compressor Mini', '22 April 2024', 'Dipinjam', Colors.green),
+                    _loanCard('Eka Putri', 'Pressure Gauge', '22 April 2024', 'Dipinjam', Colors.green),
+                    
+                    const SizedBox(height: 20), // Memberi ruang di bawah agar tidak mentok
                   ],
                 ),
               ),
@@ -138,8 +142,8 @@ class AdminDashboard extends StatelessWidget {
       children: [
         const CircleAvatar(
           radius: 28,
-          backgroundColor: Color(0xFF001F3F),
-          child: Icon(Icons.settings_input_component, color: Colors.orange, size: 30),
+          backgroundColor: Color(0xFF001F3F), // Navy
+          child: Icon(Icons.settings_input_component, color: Colors.orange, size: 28),
         ),
         const SizedBox(height: 8),
         const Text("PEMINJAMAN ALAT", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
@@ -148,13 +152,13 @@ class AdminDashboard extends StatelessWidget {
     );
   }
 
-  // --- Widget Profil Admin ---
+  // --- Widget Badge Admin ---
   Widget _buildAdminBadge() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(25),
       ),
       child: const Row(
         children: [
@@ -183,35 +187,35 @@ class AdminDashboard extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [BoxShadow(color: color.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 4))],
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(color: color.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 5))
+        ],
       ),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Icon(icon, color: Colors.white, size: 20),
-              Text(number, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
+              Icon(icon, color: Colors.white, size: 22),
+              Text(number, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20)),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           Text(label, style: const TextStyle(color: Colors.white, fontSize: 9), textAlign: TextAlign.center),
         ],
       ),
     );
   }
 
-  // --- Widget Kartu List ---
-  Widget _loanCard(String nama, String alat, String tanggal, String status, Color statusColor) {
+  // --- Widget Loan Card ---
+  Widget _loanCard(String nama, String alat, String tgl, String status, Color statusColor) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Colors.grey.shade100),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 5)],
+        color: const Color(0xFFF5F5F5), // Warna background card abu-abu muda
+        borderRadius: BorderRadius.circular(18),
       ),
       child: Row(
         children: [
@@ -219,12 +223,12 @@ class AdminDashboard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _infoText('Peminjam', nama),
-                _infoText('Nama Alat', alat),
-                _infoText('Tanggal pinjam', tanggal),
+                _rowInfo('Peminjam', nama),
+                _rowInfo('Nama Alat', alat),
+                _rowInfo('Tanggal pinjam', tgl),
                 Row(
                   children: [
-                    const Text('Status : ', style: TextStyle(fontSize: 10, color: Colors.grey)),
+                    const Text('Status : ', style: TextStyle(fontSize: 10, color: Colors.black54)),
                     Text(status, style: TextStyle(fontSize: 10, color: statusColor, fontWeight: FontWeight.bold)),
                   ],
                 ),
@@ -234,34 +238,35 @@ class AdminDashboard extends StatelessWidget {
           Column(
             children: [
               _actionBtn('Setujui', const Color(0xFFA5D6A7)),
-              const SizedBox(height: 4),
+              const SizedBox(height: 6),
               _actionBtn('Tolak', const Color(0xFFEF9A9A)),
             ],
-          ),
+          )
         ],
       ),
     );
   }
 
-  Widget _infoText(String label, String value) {
+  Widget _rowInfo(String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 2),
-      child: Row(
-        children: [
-          Text('$label : ', style: const TextStyle(fontSize: 10, color: Colors.grey)),
-          Text(value, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-        ],
+      child: RichText(
+        text: TextSpan(
+          style: const TextStyle(color: Colors.black, fontSize: 10),
+          children: [
+            TextSpan(text: '$label : ', style: const TextStyle(color: Colors.black54)),
+            TextSpan(text: value, style: const TextStyle(fontWeight: FontWeight.bold)),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _actionBtn(String text, Color color) {
+  Widget _actionBtn(String label, Color color) {
     return Container(
-      width: 60,
-      alignment: Alignment.center,
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(8)),
-      child: Text(text, style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold)),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+      decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)),
+      child: Text(label, style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold)),
     );
   }
 
@@ -271,7 +276,7 @@ class AdminDashboard extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.only(top: 50, bottom: 20),
+            padding: const EdgeInsets.only(top: 60, bottom: 30),
             width: double.infinity,
             color: const Color(0xFFF9D59B),
             child: const Column(
@@ -281,31 +286,31 @@ class AdminDashboard extends StatelessWidget {
                   backgroundColor: Color(0xFF001F3F),
                   child: Icon(Icons.settings_input_component, color: Colors.orange, size: 40),
                 ),
-                SizedBox(height: 10),
-                Text("PEMINJAMAN ALAT", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                SizedBox(height: 15),
+                Text("PEMINJAMAN ALAT", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               ],
             ),
           ),
-          ListTile(leading: const Icon(Icons.grid_view, color: Colors.orange), title: const Text('Dashboard', style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold)), onTap: () {}),
-          _drawerItem(Icons.inventory_2_outlined, 'Data alat'),
-          _drawerItem(Icons.category_outlined, 'Kategori'),
-          _drawerItem(Icons.people_outline, 'Data user'),
-          _drawerItem(Icons.assignment_outlined, 'Peminjaman'),
-          _drawerItem(Icons.assignment_return_outlined, 'Pengembalian'),
-          _drawerItem(Icons.history, 'Log Aktifitas'),
+          _drawerTile(Icons.grid_view, 'Dashboard', isSelected: true),
+          _drawerTile(Icons.inventory_2_outlined, 'Data alat'),
+          _drawerTile(Icons.category_outlined, 'Kategori'),
+          _drawerTile(Icons.people_outline, 'Data user'),
+          _drawerTile(Icons.assignment_outlined, 'Peminjaman'),
+          _drawerTile(Icons.assignment_return_outlined, 'Pengembalian'),
+          _drawerTile(Icons.history, 'Log Aktifitas'),
           const Spacer(),
           Padding(
             padding: const EdgeInsets.all(20),
             child: Align(
               alignment: Alignment.bottomRight,
-              child: ElevatedButton.icon(
+              child: TextButton.icon(
                 onPressed: () {},
-                // WARNA IKON SESUAI PERMINTAAN: #324E30
-                icon: const Icon(Icons.logout, color: Color(0xFF324E30)),
+                icon: const Icon(Icons.logout, color: Color(0xFF324E30)), 
                 label: const Text('Keluar', style: TextStyle(color: Color(0xFF324E30), fontWeight: FontWeight.bold)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFF9D59B),
+                style: TextButton.styleFrom(
+                  backgroundColor: const Color(0xFFFFD180),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                 ),
               ),
             ),
@@ -315,11 +320,11 @@ class AdminDashboard extends StatelessWidget {
     );
   }
 
-  Widget _drawerItem(IconData icon, String title) {
+  Widget _drawerTile(IconData icon, String title, {bool isSelected = false}) {
     return ListTile(
-      leading: Icon(icon, color: Colors.grey),
-      title: Text(title),
+      leading: Icon(icon, color: isSelected ? Colors.orange : Colors.grey),
+      title: Text(title, style: TextStyle(color: isSelected ? Colors.orange : Colors.black87, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
       onTap: () {},
     );
   }
-}
+}1

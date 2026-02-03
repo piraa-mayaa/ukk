@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(fontFamily: 'Sans-Serif'),
+      theme: ThemeData(fontFamily: 'Poppins'),
       home: const DashboardScreen(),
     );
   }
