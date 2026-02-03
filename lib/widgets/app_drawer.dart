@@ -6,7 +6,8 @@ class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Column(
+      child: ListView(
+        padding: EdgeInsets.zero,
         children: [
           Container(
             height: 180,
@@ -18,6 +19,7 @@ class AppDrawer extends StatelessWidget {
               ),
             ),
           ),
+
           _item(Icons.dashboard, 'Dashboard'),
           _item(Icons.inventory, 'Data alat'),
           _item(Icons.category, 'Kategori'),
@@ -25,7 +27,9 @@ class AppDrawer extends StatelessWidget {
           _item(Icons.assignment, 'Peminjaman'),
           _item(Icons.assignment_return, 'Pengembalian'),
           _item(Icons.history, 'Log Aktivitas'),
-          const Spacer(),
+
+          const SizedBox(height: 20),
+
           Padding(
             padding: const EdgeInsets.all(16),
             child: ElevatedButton.icon(
@@ -38,7 +42,7 @@ class AppDrawer extends StatelessWidget {
               icon: const Icon(Icons.logout),
               label: const Text('Keluar'),
             ),
-          )
+          ),
         ],
       ),
     );

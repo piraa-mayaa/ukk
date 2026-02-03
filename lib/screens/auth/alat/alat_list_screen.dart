@@ -13,7 +13,10 @@ class AlatList extends StatelessWidget {
         elevation: 0,
         title: const Text(
           'Data Alat',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         actions: [
           Container(
@@ -34,7 +37,7 @@ class AlatList extends StatelessWidget {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
       body: Column(
@@ -73,106 +76,111 @@ class AlatList extends StatelessWidget {
           ),
 
           // ================= LIST =================
-Expanded(
-  child: ListView(
-    padding: const EdgeInsets.symmetric(horizontal: 12),
-    children: const [
-      AlatCard(
-        nama: 'Oscilloscope',
-        kondisi: 'Alat Ukur',
-        unit: 1, 
-        image: 'assets/alat/oscilloscope.png',
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              children: const [
+                AlatCard(
+                  nama: 'Oscilloscope',
+                  kondisi: 'Alat Ukur',
+                  unit: 1,
+                  image: 'assets/alat/oscilloscope.png',
+                ),
+                AlatCard(
+                  nama: 'Tang Amper',
+                  kondisi: 'Alat Ukur',
+                  unit: 1,
+                  image: 'assets/alat/Tang_Amper.png',
+                ),
+                AlatCard(
+                  nama: 'Multimeter',
+                  kondisi: 'Alat Ukur',
+                  unit: 1,
+                  image: 'assets/alat/Multimeter.png',
+                ),
+                AlatCard(
+                  nama: 'Power Supply',
+                  kondisi: 'Alat Listrik',
+                  unit: 2,
+                  image: 'assets/alat/Power_Supply.png',
+                ),
+                AlatCard(
+                  nama: 'Generator Trainer',
+                  kondisi: 'Alat Mesin',
+                  unit: 2,
+                  image: 'assets/alat/Generator_Trainer.png',
+                ),
+                AlatCard(
+                  nama: 'PLC Trainer',
+                  kondisi: 'Alat Kontrol',
+                  unit: 4,
+                  image: 'assets/alat/PLC_Trainer.png',
+                ),
+                AlatCard(
+                  nama: 'Voltage Regulator',
+                  kondisi: 'Alat Listrik',
+                  unit: 3,
+                  image: 'assets/alat/Voltage_Regulator.png',
+                ),
+                AlatCard(
+                  nama: 'Frequency Meter',
+                  kondisi: 'Alat Ukur',
+                  unit: 1,
+                  image: 'assets/alat/Frequency_Meter.png',
+                ),
+                AlatCard(
+                  nama: 'Thermometer Digital',
+                  kondisi: 'Alat Pendukung',
+                  unit: 7,
+                  image: 'assets/alat/Thermometer_Digital.png',
+                ),
+                AlatCard(
+                  nama: 'Pressure Gauge',
+                  kondisi: 'Alat Pendukung',
+                  unit: 5,
+                  image: 'assets/alat/Pressure_Gauge.png',
+                ),
+                AlatCard(
+                  nama: 'Relay Proteksi',
+                  kondisi: 'Alat Listrik',
+                  unit: 5,
+                  image: 'assets/alat/Relay_Proteksi.png',
+                ),
+                AlatCard(
+                  nama: 'Motor Induksi',
+                  kondisi: 'Alat Mesin',
+                  unit: 6,
+                  image: 'assets/alat/Motor_Induksi.png',
+                ),
+                AlatCard(
+                  nama: 'Inverter',
+                  kondisi: 'Alat Kontrol',
+                  unit: 4,
+                  image: 'assets/alat/Inverter.png',
+                ),
+                AlatCard(
+                  nama: 'Sensor Suhu',
+                  kondisi: 'Alat Pendukung',
+                  unit: 7,
+                  image: 'assets/alat/Sensor_Suhu.png',
+                ),
+                AlatCard(
+                  nama: 'Compressor Mini',
+                  kondisi: 'Alat Pendukung',
+                  unit: 8,
+                  image: 'assets/alat/Compressor_Mini.png',
+                ),
+                AlatCard(
+                  nama: 'Digital Tester',
+                  kondisi: 'Alat Ukur',
+                  unit: 1,
+                  image: 'assets/alat/Digital_Tester.png',
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
-      AlatCard(
-        nama: 'Tang Amper',
-        kondisi: 'Alat Ukur',
-        unit: 1, 
-        image: 'assets/alat/tang_amper.png',
-      ),
-      AlatCard(
-        nama: 'Multimeter',
-        kondisi: 'Alat Ukur',
-        unit: 1, 
-        image: 'assets/alat/multimeter.png',
-      ),
-      AlatCard(
-        nama: 'Power Supply',
-        kondisi: 'Alat Listrik',
-        unit: 2, 
-        image: 'assets/alat/power_supply.png',
-      ),
-      AlatCard(
-        nama: 'Generator Trainer',
-        kondisi: 'Alat Mesin',
-        unit: 2, 
-        image: 'assets/alat/generator_trainer.png',
-      ),
-      AlatCard(
-        nama: 'PLC Trainer',
-        kondisi: 'Alat Kontrol',
-        unit: 4, 
-        image: 'assets/alat/plc_trainer.png',
-      ),
-      AlatCard(
-        nama: 'Voltage Regulator',
-        kondisi: 'Alat Listrik',
-        unit: 3, 
-        image: 'assets/alat/voltage_regulator.png',
-      ),
-      AlatCard(
-        nama: 'Frequency Meter',
-        kondisi: 'Alat Ukur',
-        unit: 1, 
-        image: 'assets/alat/frequency_meter.png',
-      ),
-      AlatCard(
-        nama: 'Thermometer Digital',
-        kondisi: 'Alat Pendukung',
-        unit: 7, 
-        image: 'assets/alat/thermometer_digital.png',
-      ),
-      AlatCard(
-        nama: 'Pressure Gauge',
-        kondisi: 'Alat Pendukung',
-        unit: 5, 
-        image: 'assets/alat/pressure_gauge.png',
-      ),
-      AlatCard(
-        nama: 'Relay Proteksi',
-        kondisi: 'Alat Listrik',
-        unit: 5, 
-        image: 'assets/alat/relay_proteksi.png',
-      ),
-      AlatCard(
-        nama: 'Motor Induksi',
-        kondisi: 'Alat Mesin',
-        unit: 6, 
-        image: 'assets/alat/motor_induksi.png',
-      ),
-      AlatCard(
-        nama: 'Inverter',
-        kondisi: 'Alat Kontrol',
-        unit: 4, 
-        image: 'assets/alat/inverter.png',
-      ),
-      AlatCard(
-        nama: 'Sensor Suhu',
-        kondisi: 'Alat Pendukung',
-        unit: 7, 
-        image: 'assets/alat/sensor_suhu.png',
-      ),
-      AlatCard(
-        nama: 'Compressor Mini',
-        kondisi: 'Alat Pendukung',
-        unit: 8, 
-        image: 'assets/alat/compressor.png',
-      ),
-      AlatCard(
-        nama: 'Digital Tester',
-        kondisi: 'Alat Ukur',
-        unit: 1, 
-        image: 'assets/alat/digital_tester.png',
-      ),
-    ],
-  ),
-),
+    );
+  }
+}

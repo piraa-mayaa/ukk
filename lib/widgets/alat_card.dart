@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 class AlatCard extends StatelessWidget {
   final String nama;
   final String kondisi;
-  final int stok;
+  final int unit;
   final String image;
 
   const AlatCard({
     super.key,
     required this.nama,
     required this.kondisi,
-    required this.stok,
+    required this.unit,
     required this.image,
   });
 
@@ -57,7 +57,7 @@ class AlatCard extends StatelessWidget {
                   style: const TextStyle(fontSize: 11),
                 ),
                 Text(
-                  'Stok : $stok',
+                  'Unit : $unit',
                   style: const TextStyle(fontSize: 11),
                 ),
               ],
