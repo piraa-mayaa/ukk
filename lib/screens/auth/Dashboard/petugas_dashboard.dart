@@ -29,19 +29,19 @@ class _PetugasDashboardState extends State<PetugasDashboard> {
       'status': 'menunggu',
     },
     {
-      'nama': 'Citra Lestari',
-      'inisial': 'CL',
-      'kelas': '12',
-      'alat': 'Tang Amper',
-      'tanggal': DateTime(2026, 1, 12),
+      'nama': 'Andi Wijaya',
+      'inisial': 'AW',
+      'kelas': '11',
+      'alat': 'Multimeter Digital',
+      'tanggal': DateTime(2026, 1, 13),
       'status': 'disetujui',
     },
     {
-      'nama': 'Citra Lestari',
-      'inisial': 'CL',
-      'kelas': '12',
-      'alat': 'Tang Amper',
-      'tanggal': DateTime(2026, 1, 12),
+      'nama': 'Budi Santoso',
+      'inisial': 'BS',
+      'kelas': '10',
+      'alat': 'Solder Listrik',
+      'tanggal': DateTime(2026, 1, 10),
       'status': 'ditolak',
       'alasan': 'Alat sedang diperbaiki',
     },
@@ -71,7 +71,6 @@ class _PetugasDashboardState extends State<PetugasDashboard> {
   @override
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('dd MMM yyyy', 'id_ID');
-    final theme = Theme.of(context);
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8E1), // cream/orange muda
@@ -166,19 +165,19 @@ class _PetugasDashboardState extends State<PetugasDashboard> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _StatCard(
+                        _buildStatCard(
                           icon: Icons.check_circle_outline,
                           label: 'Alat tersedia',
                           value: stats['tersedia'],
                           color: Colors.green,
                         ),
-                        _StatCard(
+                        _buildStatCard(
                           icon: Icons.swap_horiz,
                           label: 'Sedang dipinjam',
                           value: stats['dipinjam'],
                           color: Colors.orange,
                         ),
-                        _StatCard(
+                        _buildStatCard(
                           icon: Icons.report_problem_outlined,
                           label: 'Alat rusak',
                           value: stats['rusak'],
@@ -191,7 +190,7 @@ class _PetugasDashboardState extends State<PetugasDashboard> {
 
                     const Text(
                       'Permintaan Peminjaman',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 12),
 
@@ -221,7 +220,7 @@ class _PetugasDashboardState extends State<PetugasDashboard> {
                                 const SizedBox(width: 12),
                                 const Text(
                                   'Ajukan Peminjaman Baru',
-                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
@@ -271,7 +270,6 @@ class _PetugasDashboardState extends State<PetugasDashboard> {
                                 const SizedBox(width: 12),
                                 ElevatedButton(
                                   onPressed: () {
-                                    // TODO: kirim ke backend
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(content: Text('Pengajuan berhasil dikirim')),
                                     );
@@ -280,6 +278,7 @@ class _PetugasDashboardState extends State<PetugasDashboard> {
                                     backgroundColor: const Color(0xFFFF9800),
                                     foregroundColor: Colors.white,
                                     padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                   ),
                                   child: const Text('Simpan'),
                                 ),
@@ -299,7 +298,9 @@ class _PetugasDashboardState extends State<PetugasDashboard> {
     );
   }
 
-  Widget _StatCard({
+  // ── Widgets & Helpers ────────────────────────────────
+
+  Widget _buildStatCard({
     required IconData icon,
     required String label,
     required int value,
@@ -308,6 +309,7 @@ class _PetugasDashboardState extends State<PetugasDashboard> {
     return Expanded(
       child: Card(
         color: color.withOpacity(0.12),
+        elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
@@ -318,7 +320,7 @@ class _PetugasDashboardState extends State<PetugasDashboard> {
               Text(
                 '$value',
                 style: TextStyle(
-                  fontSize: 28,
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: color,
                 ),
@@ -326,7 +328,7 @@ class _PetugasDashboardState extends State<PetugasDashboard> {
               Text(
                 label,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: color.withOpacity(0.9), fontSize: 13),
+                style: TextStyle(color: color.withOpacity(0.9), fontSize: 11),
               ),
             ],
           ),
@@ -353,6 +355,7 @@ class _PetugasDashboardState extends State<PetugasDashboard> {
 
     return Card(
       color: cardColor,
+      elevation: 0,
       margin: const EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
@@ -363,7 +366,7 @@ class _PetugasDashboardState extends State<PetugasDashboard> {
             Row(
               children: [
                 CircleAvatar(
-                  radius: 24,
+                  radius: 22,
                   backgroundColor: accentColor.withOpacity(0.2),
                   child: Text(
                     req['inisial'],
@@ -380,7 +383,7 @@ class _PetugasDashboardState extends State<PetugasDashboard> {
                         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                       ),
                       Text(
-                        '${req['kelas']} • ${dateFormat.format(req['tanggal'])}',
+                        'Kelas ${req['kelas']} • ${dateFormat.format(req['tanggal'])}',
                         style: TextStyle(color: Colors.grey[700], fontSize: 13),
                       ),
                     ],
@@ -390,7 +393,7 @@ class _PetugasDashboardState extends State<PetugasDashboard> {
             ),
             const SizedBox(height: 16),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
@@ -400,10 +403,10 @@ class _PetugasDashboardState extends State<PetugasDashboard> {
                   Expanded(
                     child: Text(
                       req['alat'],
-                      style: const TextStyle(fontWeight: FontWeight.w500),
+                      style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
                     ),
                   ),
-                  Icon(Icons.arrow_forward_ios_rounded, size: 16, color: accentColor),
+                  Icon(Icons.arrow_forward_ios_rounded, size: 14, color: accentColor),
                 ],
               ),
             ),
@@ -414,17 +417,23 @@ class _PetugasDashboardState extends State<PetugasDashboard> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   OutlinedButton(
-                    onPressed: () {/* TODO tolak */},
+                    onPressed: () {},
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.red,
                       side: const BorderSide(color: Colors.red),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
                     child: const Text('Tolak'),
                   ),
                   const SizedBox(width: 12),
                   ElevatedButton(
-                    onPressed: () {/* TODO setuju */},
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
                     child: const Text('Setuju'),
                   ),
                 ],
@@ -440,7 +449,7 @@ class _PetugasDashboardState extends State<PetugasDashboard> {
                   ),
                   child: Text(
                     statusLabel,
-                    style: TextStyle(color: accentColor, fontWeight: FontWeight.w600),
+                    style: TextStyle(color: accentColor, fontWeight: FontWeight.bold, fontSize: 12),
                   ),
                 ),
               ),
@@ -448,8 +457,8 @@ class _PetugasDashboardState extends State<PetugasDashboard> {
             if (req['alasan'] != null) ...[
               const SizedBox(height: 12),
               Text(
-                req['alasan'],
-                style: TextStyle(color: Colors.red[700], fontSize: 13),
+                'Alasan: ${req['alasan']}',
+                style: TextStyle(color: Colors.red[700], fontSize: 13, fontStyle: FontStyle.italic),
               ),
             ],
           ],
@@ -479,7 +488,7 @@ class _PetugasDashboardState extends State<PetugasDashboard> {
     return InputDecoration(
       labelText: label,
       filled: true,
-      fillColor: Colors.white,
+      fillColor: Colors.grey.shade100,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide.none,
