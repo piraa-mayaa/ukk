@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 
+// Consolidated common widgets: AlatCard, KategoriCard
+
 class AlatCard extends StatelessWidget {
   final String nama;
   final String kondisi;
   final int unit;
   final String image;
+  final String? imageUrl;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
   const AlatCard({
     super.key,
@@ -12,13 +17,15 @@ class AlatCard extends StatelessWidget {
     required this.kondisi,
     required this.unit,
     required this.image,
+    this.imageUrl,
+    this.onEdit,
+    this.onDelete,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // TODO: Buka halaman detail alat (misal Navigator.push ke DetailAlatScreen)
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Detail alat: $nama')),
         );
@@ -40,7 +47,6 @@ class AlatCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Gambar alat
             Container(
               width: 80,
               height: 80,
@@ -51,23 +57,30 @@ class AlatCard extends StatelessWidget {
               padding: const EdgeInsets.all(8),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: Image.asset(
-                  image,
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) {
-                    return const Icon(
-                      Icons.broken_image_outlined,
-                      size: 40,
-                      color: Colors.grey,
-                    );
-                  },
-                ),
+                child: imageUrl != null && imageUrl!.startsWith('http')
+                    ? Image.network(
+                        imageUrl!,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(
+                          Icons.broken_image_outlined,
+                          size: 40,
+                          color: Colors.grey,
+                        ),
+                      )
+                    : Image.asset(
+                        image,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(
+                          Icons.broken_image_outlined,
+                          size: 40,
+                          color: Colors.grey,
+                        ),
+                      ),
               ),
             ),
-
             const SizedBox(width: 16),
-
-            // Info alat
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,20 +107,14 @@ class AlatCard extends StatelessWidget {
                 ],
               ),
             ),
-
-            // Tombol aksi (edit & delete)
             Column(
               children: [
                 _actionButton(Icons.edit, Colors.green, () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Edit $nama')),
-                  );
+                  if (onEdit != null) onEdit!();
                 }),
                 const SizedBox(height: 8),
                 _actionButton(Icons.delete, Colors.red, () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Hapus $nama')),
-                  );
+                  if (onDelete != null) onDelete!();
                 }),
               ],
             ),
@@ -132,6 +139,38 @@ class AlatCard extends StatelessWidget {
           icon,
           size: 18,
           color: color,
+        ),
+      ),
+    );
+  }
+}
+
+class KategoriCard extends StatelessWidget {
+  final String nama;
+  final String keterangan;
+  final VoidCallback onEdit;
+
+  const KategoriCard({
+    super.key,
+    required this.nama,
+    required this.keterangan,
+    required this.onEdit,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      elevation: 2,
+      child: ListTile(
+        title: Text(
+          nama,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(keterangan),
+        trailing: IconButton(
+          icon: const Icon(Icons.edit, color: Colors.orange),
+          onPressed: onEdit,
         ),
       ),
     );

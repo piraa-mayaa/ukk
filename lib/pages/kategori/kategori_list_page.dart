@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../widgets/kategori_card.dart';
+import '../../widgets/widgets.dart';
 
 class KategoriListPage extends StatelessWidget {
   const KategoriListPage({super.key});

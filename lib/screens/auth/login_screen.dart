@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ukk/services/supabase_service.dart';
+import 'package:ukk/config/routes.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -11,15 +13,31 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final usernameCtrl = TextEditingController();
   final passwordCtrl = TextEditingController();
-
   bool showError = false;
+  bool _loading = false;
 
-  void login() {
+  Future<void> login() async {
     if (!_formKey.currentState!.validate()) return;
+    setState(() {
+      _loading = true;
+      showError = false;
+    });
 
-    if (usernameCtrl.text == 'admin' &&
-        passwordCtrl.text == 'admin123') {
-      Navigator.pushReplacementNamed(context, '/admin');
+    final svc = SupabaseService();
+    final user = await svc.loginWithUsersTable(
+        usernameCtrl.text.trim(), passwordCtrl.text);
+
+    setState(() => _loading = false);
+
+    if (user != null) {
+      // Navigate based on role
+      if (user.role == 'admin') {
+        Navigator.pushReplacementNamed(context, AppRoutes.admin);
+      } else if (user.role == 'petugas') {
+        Navigator.pushReplacementNamed(context, AppRoutes.petugas);
+      } else {
+        Navigator.pushReplacementNamed(context, AppRoutes.peminjam);
+      }
     } else {
       setState(() => showError = true);
     }
@@ -80,18 +98,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-
                     const SizedBox(height: 24),
-
                     const Text('Username:'),
                     const SizedBox(height: 6),
                     _inputField(
                       controller: usernameCtrl,
                       hint: 'Masukkan Username',
                     ),
-
                     const SizedBox(height: 16),
-
                     const Text('Password:'),
                     const SizedBox(height: 6),
                     _inputField(
@@ -99,7 +113,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       hint: 'Masukkan Password',
                       obscure: true,
                     ),
-
                     if (showError)
                       const Padding(
                         padding: EdgeInsets.only(top: 6),
@@ -108,12 +121,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           style: TextStyle(color: Colors.red),
                         ),
                       ),
-
                     const SizedBox(height: 24),
-
                     Center(
                       child: ElevatedButton(
-                        onPressed: login,
+                        onPressed: _loading ? null : login,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.orange,
                           minimumSize: const Size(160, 44),
@@ -121,7 +132,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             borderRadius: BorderRadius.circular(20),
                           ),
                         ),
-                        child: const Text('Masuk'),
+                        child: _loading
+                            ? const SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(
+                                    color: Colors.white, strokeWidth: 2))
+                            : const Text('Masuk'),
                       ),
                     ),
                   ],
@@ -142,8 +159,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return TextFormField(
       controller: controller,
       obscureText: obscure,
-      validator: (v) =>
-          v == null || v.isEmpty ? 'Wajib diisi' : null,
+      validator: (v) => v == null || v.isEmpty ? 'Wajib diisi' : null,
       decoration: InputDecoration(
         hintText: hint,
         contentPadding:
@@ -154,8 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide:
-              const BorderSide(color: Colors.orange, width: 2),
+          borderSide: const BorderSide(color: Colors.orange, width: 2),
         ),
       ),
     );

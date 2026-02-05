@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ukk/config/routes.dart';
+import 'package:ukk/services/supabase_config.dart';
 
 class SplashRedirect extends StatefulWidget {
   const SplashRedirect({super.key});
@@ -15,7 +15,7 @@ class _SplashRedirectState extends State<SplashRedirect> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final session = Supabase.instance.client.auth.currentSession;
+      final session = SupabaseConfig.client.auth.currentSession;
 
       if (session == null) {
         Navigator.pushReplacementNamed(context, AppRoutes.login);

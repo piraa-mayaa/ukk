@@ -1,8 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:ukk/widgets/alat_card.dart';
+import 'package:ukk/widgets/widgets.dart';
+import 'package:ukk/services/supabase_service.dart';
+import 'package:ukk/models/alat_model_api.dart';
+import 'package:ukk/screens/auth/alat/alat_form_screen.dart';
 
-class AlatList extends StatelessWidget {
+final _supabase = SupabaseService();
+
+class AlatList extends StatefulWidget {
   const AlatList({super.key});
+
+  @override
+  State<AlatList> createState() => _AlatListState();
+}
+
+class _AlatListState extends State<AlatList> {
+  late Future<List<AlatModel>> _future;
+
+  @override
+  void initState() {
+    super.initState();
+    _refresh();
+  }
+
+  void _refresh() {
+    setState(() {
+      _future = _supabase.getAlats();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,8 +88,7 @@ class AlatList extends StatelessWidget {
                         prefixIcon: const Icon(Icons.search),
                         filled: true,
                         fillColor: const Color(0xFFFFEBCB),
-                        contentPadding:
-                            const EdgeInsets.symmetric(vertical: 0),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 0),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(22),
                           borderSide: BorderSide.none,
@@ -74,124 +97,105 @@ class AlatList extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  Container(
-                    width: 42,
-                    height: 42,
-                    decoration: BoxDecoration(
-                      color: Colors.orange,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: const Icon(
-                      Icons.add,
-                      color: Colors.white,
+                  InkWell(
+                    onTap: () async {
+                      final created = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => AlatFormScreen(),
+                        ),
+                      );
+                      if (created == true) _refresh();
+                    },
+                    child: Container(
+                      width: 42,
+                      height: 42,
+                      decoration: BoxDecoration(
+                        color: Colors.orange,
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: const Icon(
+                        Icons.add,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
 
-            // ================= LIST =================
+            // ================= LIST (dynamic from Supabase) =================
             Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                children: const [
-                  AlatCard(
-                    nama: 'Oscilloscope',
-                    kondisi: 'Alat Ukur',
-                    unit: 1,
-                    image: 'assets/alat/oscilloscope.png',
-                  ),
-                  AlatCard(
-                    nama: 'Tang Amper',
-                    kondisi: 'Alat Ukur',
-                    unit: 1,
-                    image: 'assets/alat/Tang_Amper.png',
-                  ),
-                  AlatCard(
-                    nama: 'Multimeter',
-                    kondisi: 'Alat Ukur',
-                    unit: 1,
-                    image: 'assets/alat/Multimeter.png',
-                  ),
-                  AlatCard(
-                    nama: 'Power Supply',
-                    kondisi: 'Alat Listrik',
-                    unit: 2,
-                    image: 'assets/alat/Power_Supply.png',
-                  ),
-                  AlatCard(
-                    nama: 'Generator Trainer',
-                    kondisi: 'Alat Mesin',
-                    unit: 2,
-                    image: 'assets/alat/Generator_Trainer.png',
-                  ),
-                  AlatCard(
-                    nama: 'PLC Trainer',
-                    kondisi: 'Alat Kontrol',
-                    unit: 4,
-                    image: 'assets/alat/PLC_Trainer.png',
-                  ),
-                  AlatCard(
-                    nama: 'Voltage Regulator',
-                    kondisi: 'Alat Listrik',
-                    unit: 3,
-                    image: 'assets/alat/Voltage_Regulator.png',
-                  ),
-                  AlatCard(
-                    nama: 'Frequency Meter',
-                    kondisi: 'Alat Ukur',
-                    unit: 1,
-                    image: 'assets/alat/Frequency_Meter.png',
-                  ),
-                  AlatCard(
-                    nama: 'Thermometer Digital',
-                    kondisi: 'Alat Pendukung',
-                    unit: 7,
-                    image: 'assets/alat/Thermometer_Digital.png',
-                  ),
-                  AlatCard(
-                    nama: 'Pressure Gauge',
-                    kondisi: 'Alat Pendukung',
-                    unit: 5,
-                    image: 'assets/alat/Pressure_Gauge.png',
-                  ),
-                  AlatCard(
-                    nama: 'Relay Proteksi',
-                    kondisi: 'Alat Listrik',
-                    unit: 5,
-                    image: 'assets/alat/Relay_Proteksi.png',
-                  ),
-                  AlatCard(
-                    nama: 'Motor Induksi',
-                    kondisi: 'Alat Mesin',
-                    unit: 6,
-                    image: 'assets/alat/Motor_Induksi.png',
-                  ),
-                  AlatCard(
-                    nama: 'Inverter',
-                    kondisi: 'Alat Kontrol',
-                    unit: 4,
-                    image: 'assets/alat/Inverter.png',
-                  ),
-                  AlatCard(
-                    nama: 'Sensor Suhu',
-                    kondisi: 'Alat Pendukung',
-                    unit: 7,
-                    image: 'assets/alat/Sensor_Suhu.png',
-                  ),
-                  AlatCard(
-                    nama: 'Compressor Mini',
-                    kondisi: 'Alat Pendukung',
-                    unit: 8,
-                    image: 'assets/alat/Compressor_Mini.png',
-                  ),
-                  AlatCard(
-                    nama: 'Digital Tester',
-                    kondisi: 'Alat Ukur',
-                    unit: 1,
-                    image: 'assets/alat/Digital_Tester.png',
-                  ),
-                ],
+              child: FutureBuilder<List<AlatModel>>(
+                future: _future,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
+                  final list = snapshot.data ?? [];
+                  if (list.isEmpty) {
+                    return const Center(child: Text('Tidak ada data alat'));
+                  }
+                  return ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    itemCount: list.length,
+                    itemBuilder: (context, i) {
+                      final a = list[i];
+                      return AlatCard(
+                        nama: a.nama,
+                        kondisi: a.kondisi ?? '-',
+                        unit: 1,
+                        image: 'assets/alat/placeholder.png',
+                        imageUrl: a.fotoUrl,
+                        onEdit: () async {
+                          final updated = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => AlatFormScreen(alat: a),
+                            ),
+                          );
+                          if (updated == true) _refresh();
+                        },
+                        onDelete: () async {
+                          final ok = await showDialog<bool>(
+                            context: context,
+                            builder: (_) => AlertDialog(
+                              title: const Text('Hapus alat'),
+                              content:
+                                  const Text('Yakin ingin menghapus alat ini?'),
+                              actions: [
+                                TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, false),
+                                    child: const Text('Batal')),
+                                TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, true),
+                                    child: const Text('Hapus')),
+                              ],
+                            ),
+                          );
+                          if (ok == true) {
+                            final success = await _supabase.deleteAlat(a.id);
+                            if (success) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('Berhasil dihapus')));
+                              _refresh();
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('Gagal menghapus')));
+                            }
+                          }
+                        },
+                      );
+                    },
+                  );
+                },
               ),
             ),
           ],

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'services/supabase_config.dart';
 
 import 'config/theme.dart';
-import 'config/routes.dart';  // pastikan nama file ini benar (routes.dart atau app_routes.dart?)
+import 'config/routes.dart';
 
 Future<void> main() async {
   // Pastikan Flutter binding sudah siap sebelum Supabase init
@@ -10,16 +10,7 @@ Future<void> main() async {
 
   // Inisialisasi Supabase dengan try-catch (penting untuk handle error)
   try {
-    await Supabase.initialize(
-      url: 'https://qrvxdlurbfywofsuhioo.supabase.co',
-      anonKey:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFydnhkbHVyYmZ5d29mc3VoaW9vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc0NzMyNjMsImV4cCI6MjA3MzA0OTI2M30.TOaJipxULCD7b6A-NbnvgsSGUG9630_QXkhU1GSJv44',
-      debug: true, // aktifkan saat development (bisa dihapus atau false di release)
-      // authOptions: const AuthOptions(
-      //   autoRefreshToken: true,
-      //   persistSession: true,
-      // ),
-    );
+    await SupabaseConfig.initialize();
     debugPrint('Supabase berhasil diinisialisasi');
   } catch (e, stack) {
     debugPrint('Gagal inisialisasi Supabase: $e');
@@ -38,20 +29,22 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Peminjaman Alat',
-      
+
       // Tema
       theme: AppTheme.light,
-      darkTheme: AppTheme.dark,           // tambahkan jika sudah punya dark theme
-      themeMode: ThemeMode.system,        // mengikuti pengaturan sistem HP (light/dark)
-      
+      darkTheme: AppTheme.dark, // tambahkan jika sudah punya dark theme
+      themeMode:
+          ThemeMode.system, // mengikuti pengaturan sistem HP (light/dark)
+
       // Routes
-      initialRoute: AppRoutes.login,      // mulai dari login (bagus untuk auth)
+      initialRoute: AppRoutes.login, // mulai dari login (bagus untuk auth)
       routes: AppRoutes.routes,
-      
+
       // Mencegah text scaling berlebihan (accessibility)
       builder: (context, child) {
         return MediaQuery(
-          data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1.0)),
+          data: MediaQuery.of(context)
+              .copyWith(textScaler: const TextScaler.linear(1.0)),
           child: child!,
         );
       },
@@ -60,4 +53,4 @@ class MyApp extends StatelessWidget {
 }
 
 // Helper global untuk akses Supabase client di mana saja
-final supabase = Supabase.instance.client;
+final supabase = SupabaseConfig.client;
