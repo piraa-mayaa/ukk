@@ -100,7 +100,8 @@ class _PeminjamanScreenState extends State<PeminjamanScreen> {
                 SnackBar(content: Text('$nama dihapus')),
               );
             },
-            child: const Text('Iya', style: TextStyle(color: Color(0xFFFF9800))),
+            child:
+                const Text('Iya', style: TextStyle(color: Color(0xFFFF9800))),
           ),
         ],
       ),
@@ -159,21 +160,18 @@ class _PeminjamanScreenState extends State<PeminjamanScreen> {
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
-
             TextFormField(
               controller: _namaController,
               decoration: _inputDecoration('Nama Peminjam'),
               validator: (v) => v!.trim().isEmpty ? 'Wajib diisi' : null,
             ),
             const SizedBox(height: 16),
-
             TextFormField(
               controller: _kelasController,
               decoration: _inputDecoration('Kelas'),
               validator: (v) => v!.trim().isEmpty ? 'Wajib diisi' : null,
             ),
             const SizedBox(height: 16),
-
             Row(
               children: [
                 Expanded(
@@ -182,8 +180,13 @@ class _PeminjamanScreenState extends State<PeminjamanScreen> {
                     child: InputDecorator(
                       decoration: _inputDecoration('Tgl Pinjam'),
                       child: Text(
-                        _tglPinjam != null ? dateFormat.format(_tglPinjam!) : 'Pilih tanggal',
-                        style: TextStyle(color: _tglPinjam != null ? Colors.black : Colors.grey[600]),
+                        _tglPinjam != null
+                            ? dateFormat.format(_tglPinjam!)
+                            : 'Pilih tanggal',
+                        style: TextStyle(
+                            color: _tglPinjam != null
+                                ? Colors.black
+                                : Colors.grey[600]),
                       ),
                     ),
                   ),
@@ -195,8 +198,13 @@ class _PeminjamanScreenState extends State<PeminjamanScreen> {
                     child: InputDecorator(
                       decoration: _inputDecoration('Tgl Kembali'),
                       child: Text(
-                        _tglKembali != null ? dateFormat.format(_tglKembali!) : 'Pilih tanggal',
-                        style: TextStyle(color: _tglKembali != null ? Colors.black : Colors.grey[600]),
+                        _tglKembali != null
+                            ? dateFormat.format(_tglKembali!)
+                            : 'Pilih tanggal',
+                        style: TextStyle(
+                            color: _tglKembali != null
+                                ? Colors.black
+                                : Colors.grey[600]),
                       ),
                     ),
                   ),
@@ -204,19 +212,18 @@ class _PeminjamanScreenState extends State<PeminjamanScreen> {
               ],
             ),
             const SizedBox(height: 16),
-
             DropdownButtonFormField<String>(
               value: _status,
               decoration: _inputDecoration('Status Peminjaman'),
               items: const [
                 DropdownMenuItem(value: 'Dipinjam', child: Text('Dipinjam')),
                 DropdownMenuItem(value: 'Terlambat', child: Text('Terlambat')),
-                DropdownMenuItem(value: 'Dikembalikan', child: Text('Dikembalikan')),
+                DropdownMenuItem(
+                    value: 'Dikembalikan', child: Text('Dikembalikan')),
               ],
               onChanged: (v) => setState(() => _status = v!),
             ),
             const SizedBox(height: 32),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -230,7 +237,8 @@ class _PeminjamanScreenState extends State<PeminjamanScreen> {
                       _status = 'Dipinjam';
                     });
                   },
-                  style: OutlinedButton.styleFrom(foregroundColor: Colors.grey[800]),
+                  style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.grey[800]),
                   child: const Text('Batal'),
                 ),
                 const SizedBox(width: 16),
@@ -246,7 +254,8 @@ class _PeminjamanScreenState extends State<PeminjamanScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFFF9800),
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 32, vertical: 14),
                   ),
                   child: const Text('Simpan'),
                 ),
@@ -306,7 +315,8 @@ class _PeminjamanScreenState extends State<PeminjamanScreen> {
 
                 return Card(
                   margin: const EdgeInsets.only(bottom: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
                   elevation: 1.5,
                   child: Padding(
                     padding: const EdgeInsets.all(16),
@@ -317,7 +327,8 @@ class _PeminjamanScreenState extends State<PeminjamanScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
                               decoration: BoxDecoration(
                                 color: statusColor.withOpacity(0.15),
                                 borderRadius: BorderRadius.circular(20),
@@ -334,14 +345,17 @@ class _PeminjamanScreenState extends State<PeminjamanScreen> {
                             Row(
                               children: [
                                 IconButton(
-                                  icon: const Icon(Icons.edit, size: 20, color: Color(0xFFFF9800)),
+                                  icon: const Icon(Icons.edit,
+                                      size: 20, color: Color(0xFFFF9800)),
                                   onPressed: () {
                                     // TODO: isi form dengan data item untuk edit
                                   },
                                 ),
                                 IconButton(
-                                  icon: const Icon(Icons.delete_outline, size: 20, color: Colors.red),
-                                  onPressed: () => _showDeleteDialog(item['nama']),
+                                  icon: const Icon(Icons.delete_outline,
+                                      size: 20, color: Colors.red),
+                                  onPressed: () =>
+                                      _showDeleteDialog(item['nama']),
                                 ),
                               ],
                             ),
@@ -350,19 +364,23 @@ class _PeminjamanScreenState extends State<PeminjamanScreen> {
                         const SizedBox(height: 8),
                         Text(
                           item['nama'],
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           'Kelas ${item['kelas']}',
-                          style: TextStyle(color: Colors.grey[700], fontSize: 13),
+                          style:
+                              TextStyle(color: Colors.grey[700], fontSize: 13),
                         ),
                         const SizedBox(height: 12),
                         Row(
                           children: [
-                            _buildDateTag('tgl pinjam', _formatDate(item['tglPinjam'])),
+                            _buildDateTag(
+                                'tgl pinjam', _formatDate(item['tglPinjam'])),
                             const SizedBox(width: 12),
-                            _buildDateTag('tgl kembali', _formatDate(item['tglKembali'])),
+                            _buildDateTag(
+                                'tgl kembali', _formatDate(item['tglKembali'])),
                           ],
                         ),
                       ],

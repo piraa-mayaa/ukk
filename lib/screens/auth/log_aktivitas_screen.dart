@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../../services/service_log.dart';
+import '../../models/log_aktivitas_model.dart';
 
 class LogAktivitasScreen extends StatefulWidget {
   const LogAktivitasScreen({super.key});
@@ -9,50 +11,32 @@ class LogAktivitasScreen extends StatefulWidget {
 }
 
 class _LogAktivitasScreenState extends State<LogAktivitasScreen> {
+  final ServiceLog _serviceLog = ServiceLog();
   String _searchQuery = '';
+  List<LogAktivitasModel> _logs = [];
+  bool _isLoading = true;
 
-  // Data dummy log aktivitas (bisa diganti dengan API nanti)
-  final List<Map<String, dynamic>> _logList = [
-    {
-      'user': 'Admin',
-      'tanggal': DateTime(2026, 1, 12),
-      'aktivitas': 'Menambahkan 3 unit Tang amper',
-      'tipe': 'Dibuat',
-      'kategori': 'Alat',
-    },
-    {
-      'user': 'Petugas',
-      'tanggal': DateTime(2026, 1, 12),
-      'aktivitas': 'Menambahkan 3 unit Tang amper',
-      'tipe': 'Dibuat',
-      'kategori': 'Alat',
-    },
-    // bisa tambah lebih banyak
-    {
-      'user': 'Admin',
-      'tanggal': DateTime(2026, 1, 11),
-      'aktivitas': 'Mengubah status Multimeter menjadi Rusak',
-      'tipe': 'Diubah',
-      'kategori': 'Alat',
-    },
-    {
-      'user': 'Petugas',
-      'tanggal': DateTime(2026, 1, 10),
-      'aktivitas': 'Mencatat pengembalian Thermometer Digital',
-      'tipe': 'Dibuat',
-      'kategori': 'Pengembalian',
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _fetchLogs();
+  }
+
+  Future<void> _fetchLogs() async {
+    setState(() => _isLoading = true);
+    final logs = await _serviceLog.getAllLogs();
+    setState(() {
+      _logs = logs;
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final isWide = MediaQuery.of(context).size.width > 960;
-
-    final filteredLogs = _logList.where((log) {
+    final filteredLogs = _logs.where((log) {
       final query = _searchQuery.toLowerCase();
-      return log['user'].toLowerCase().contains(query) ||
-          log['aktivitas'].toLowerCase().contains(query) ||
-          log['kategori'].toLowerCase().contains(query);
+      return log.namaUser.toLowerCase().contains(query) ||
+          log.aktivitas.toLowerCase().contains(query);
     }).toList();
 
     return Container(
@@ -96,114 +80,127 @@ class _LogAktivitasScreenState extends State<LogAktivitasScreen> {
 
           // List log
           Expanded(
-            child: filteredLogs.isEmpty
-                ? const Center(
-                    child: Text(
-                      'Tidak ada aktivitas yang ditemukan',
-                      style: TextStyle(color: Colors.grey, fontSize: 16),
-                    ),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    itemCount: filteredLogs.length,
-                    itemBuilder: (context, index) {
-                      final log = filteredLogs[index];
-                      final dateFormat = DateFormat('dd MMM yyyy', 'id_ID');
-                      final formattedDate = dateFormat.format(log['tanggal']);
-
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        elevation: 1.5,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
+            child: RefreshIndicator(
+              onRefresh: _fetchLogs,
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : filteredLogs.isEmpty
+                      ? Center(
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          log['user'],
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          formattedDate,
-                                          style: TextStyle(
-                                            color: Colors.grey[700],
-                                            fontSize: 13,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 6,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFFFFC107).withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Text(
-                                      log['tipe'],
-                                      style: const TextStyle(
-                                        color: Color(0xFFFF9800),
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
+                              Icon(Icons.history_toggle_off,
+                                  size: 64, color: Colors.grey[400]),
+                              const SizedBox(height: 16),
                               Text(
-                                log['aktivitas'],
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  height: 1.4,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.blueGrey.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Text(
-                                    log['kategori'],
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.blueGrey,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
+                                'Tidak ada aktivitas yang ditemukan',
+                                style: TextStyle(
+                                    color: Colors.grey[600], fontSize: 16),
                               ),
                             ],
                           ),
+                        )
+                      : ListView.builder(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          itemCount: filteredLogs.length,
+                          itemBuilder: (context, index) {
+                            final log = filteredLogs[index];
+                            final dateFormat =
+                                DateFormat('dd MMM yyyy, HH:mm', 'id_ID');
+                            final formattedDate = dateFormat.format(log.waktu);
+
+                            final isSystem = log.idUser == null;
+
+                            IconData icon;
+                            Color iconColor;
+
+                            if (log.aktivitas.toLowerCase().contains('login')) {
+                              icon = Icons.login;
+                              iconColor = Colors.green;
+                            } else if (log.aktivitas
+                                    .toLowerCase()
+                                    .contains('approve') ||
+                                log.aktivitas
+                                    .toLowerCase()
+                                    .contains('menyetujui')) {
+                              icon = Icons.check_circle;
+                              iconColor = Colors.blue;
+                            } else if (log.aktivitas
+                                    .toLowerCase()
+                                    .contains('tolak') ||
+                                log.aktivitas
+                                    .toLowerCase()
+                                    .contains('menolak')) {
+                              icon = Icons.cancel;
+                              iconColor = Colors.red;
+                            } else {
+                              icon = Icons.history;
+                              iconColor = Colors.orange;
+                            }
+
+                            return Card(
+                              margin: const EdgeInsets.only(bottom: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 0,
+                              color: Colors.white,
+                              child: ListTile(
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
+                                leading: CircleAvatar(
+                                  backgroundColor: iconColor.withOpacity(0.1),
+                                  child: Icon(icon, color: iconColor, size: 20),
+                                ),
+                                title: Row(
+                                  children: [
+                                    Text(
+                                      log.namaUser,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14),
+                                    ),
+                                    if (isSystem) ...[
+                                      const SizedBox(width: 8),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 6, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey[200],
+                                          borderRadius:
+                                              BorderRadius.circular(4),
+                                        ),
+                                        child: const Text('SYSTEM',
+                                            style: TextStyle(
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey)),
+                                      ),
+                                    ]
+                                  ],
+                                ),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(height: 4),
+                                    Text(log.aktivitas,
+                                        style: const TextStyle(
+                                            color: Colors.black87)),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      formattedDate,
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey[500]),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
+            ),
           ),
         ],
       ),

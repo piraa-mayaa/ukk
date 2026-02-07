@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
-import '../../../widgets/responsive_layout.dart';
-import '../../../widgets/widgets.dart';
-import 'package:ukk/services/service_alat.dart';
-import 'package:ukk/models/alat_model_api.dart';
-import './alat_form_screen.dart';
+import '../../widgets/responsive_layout.dart';
+import 'package:ukk/models/kategori_model.dart';
+import 'package:ukk/services/service_kategori.dart';
+import 'package:ukk/widgets/widgets.dart';
+import './kategori_form_screen.dart';
 
-class AlatList extends StatefulWidget {
-  const AlatList({super.key});
+class KategoriListScreen extends StatefulWidget {
+  const KategoriListScreen({super.key});
 
   @override
-  State<AlatList> createState() => _AlatListState();
+  State<KategoriListScreen> createState() => _KategoriListScreenState();
 }
 
-class _AlatListState extends State<AlatList> {
-  final ServiceAlat _serviceAlat = ServiceAlat();
-  late Future<List<AlatModel>> _future;
+class _KategoriListScreenState extends State<KategoriListScreen> {
+  final ServiceKategori _service = ServiceKategori();
+  late Future<List<Map<String, dynamic>>> _future;
   final TextEditingController _searchController = TextEditingController();
-  List<AlatModel> _allAlats = [];
-  List<AlatModel> _filteredAlats = [];
+  List<Map<String, dynamic>> _allKategori = [];
+  List<Map<String, dynamic>> _filteredKategori = [];
 
   @override
   void initState() {
@@ -34,10 +34,10 @@ class _AlatListState extends State<AlatList> {
 
   void _refresh() {
     setState(() {
-      _future = _serviceAlat.getAlats().then((alats) {
-        _allAlats = alats;
-        _filteredAlats = alats;
-        return alats;
+      _future = _service.getKategoriWithAlatCount().then((data) {
+        _allKategori = data;
+        _filteredKategori = data;
+        return data;
       });
     });
   }
@@ -45,13 +45,13 @@ class _AlatListState extends State<AlatList> {
   void _onSearchChanged() {
     final query = _searchController.text.toLowerCase().trim();
     if (query.isEmpty) {
-      setState(() => _filteredAlats = _allAlats);
+      setState(() => _filteredKategori = _allKategori);
     } else {
       setState(() {
-        _filteredAlats = _allAlats.where((alat) {
-          return alat.nama.toLowerCase().contains(query) ||
-              alat.kode.toLowerCase().contains(query) ||
-              (alat.kategoriNama?.toLowerCase().contains(query) ?? false);
+        _filteredKategori = _allKategori.where((item) {
+          final kategori = item['kategori'] as KategoriModel;
+          return kategori.nama.toLowerCase().contains(query) ||
+              (kategori.keterangan?.toLowerCase().contains(query) ?? false);
         }).toList();
       });
     }
@@ -62,11 +62,11 @@ class _AlatListState extends State<AlatList> {
     return Scaffold(
       backgroundColor: const Color(0xFFFFE3B3),
       appBar: AppBar(
-        backgroundColor: const Color(0xFFFFC97C),
+        backgroundColor: const Color(0xFFF9D59B),
         elevation: 0,
         centerTitle: Responsive.isMobile(context),
         title: const Text(
-          'Kelola Data Alat',
+          'Kelola Data Kategori',
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
@@ -106,7 +106,7 @@ class _AlatListState extends State<AlatList> {
       body: SafeArea(
         child: Column(
           children: [
-            // ================= SEARCH =================
+            // ================= SEARCH & ADD =================
             Padding(
               padding: const EdgeInsets.all(16),
               child: Center(
@@ -118,7 +118,7 @@ class _AlatListState extends State<AlatList> {
                         child: TextField(
                           controller: _searchController,
                           decoration: InputDecoration(
-                            hintText: 'Cari nama/kode/kategori alat...',
+                            hintText: 'Cari nama atau keterangan...',
                             prefixIcon: const Icon(Icons.search),
                             filled: true,
                             fillColor: const Color(0xFFFFEBCB),
@@ -137,7 +137,7 @@ class _AlatListState extends State<AlatList> {
                           final created =
                               await Navigator.of(context).push<bool>(
                             MaterialPageRoute(
-                              builder: (_) => const AlatFormScreen(),
+                              builder: (_) => const KategoriFormScreen(),
                             ),
                           );
                           if (created == true && mounted) {
@@ -173,17 +173,32 @@ class _AlatListState extends State<AlatList> {
 
             // ================= LIST =================
             Expanded(
-              child: FutureBuilder<List<AlatModel>>(
+              child: FutureBuilder<List<Map<String, dynamic>>>(
                 future: _future,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   }
                   if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.error_outline,
+                              size: 64, color: Colors.red),
+                          const SizedBox(height: 16),
+                          Text('Error: ${snapshot.error}'),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: _refresh,
+                            child: const Text('Coba Lagi'),
+                          ),
+                        ],
+                      ),
+                    );
                   }
 
-                  final list = _filteredAlats;
+                  final list = _filteredKategori;
                   if (list.isEmpty) {
                     return Center(
                       child: Column(
@@ -194,18 +209,11 @@ class _AlatListState extends State<AlatList> {
                           const SizedBox(height: 16),
                           Text(
                             _searchController.text.isNotEmpty
-                                ? 'Tidak ditemukan alat dengan kata kunci "${_searchController.text}"'
-                                : 'Tidak ada data alat',
+                                ? 'Tidak ditemukan kategori dengan kata kunci "${_searchController.text}"'
+                                : 'Belum ada data kategori.',
                             textAlign: TextAlign.center,
                             style: const TextStyle(color: Colors.grey),
                           ),
-                          if (_searchController.text.isNotEmpty)
-                            TextButton(
-                              onPressed: () {
-                                _searchController.clear();
-                              },
-                              child: const Text('Reset Pencarian'),
-                            ),
                         ],
                       ),
                     );
@@ -215,31 +223,31 @@ class _AlatListState extends State<AlatList> {
                     mobile: ListView.builder(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       itemCount: list.length,
-                      itemBuilder: (context, i) => _buildAlatCard(list[i]),
+                      itemBuilder: (context, i) => _buildCard(list[i]),
                     ),
                     tablet: GridView.builder(
                       padding: const EdgeInsets.all(16),
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
-                        childAspectRatio: 2.2,
+                        childAspectRatio: 2.8,
                         crossAxisSpacing: 16,
                         mainAxisSpacing: 16,
                       ),
                       itemCount: list.length,
-                      itemBuilder: (context, i) => _buildAlatCard(list[i]),
+                      itemBuilder: (context, i) => _buildCard(list[i]),
                     ),
                     desktop: GridView.builder(
                       padding: const EdgeInsets.all(20),
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 3,
-                        childAspectRatio: 2.2,
+                        childAspectRatio: 2.5,
                         crossAxisSpacing: 20,
                         mainAxisSpacing: 20,
                       ),
                       itemCount: list.length,
-                      itemBuilder: (context, i) => _buildAlatCard(list[i]),
+                      itemBuilder: (context, i) => _buildCard(list[i]),
                     ),
                   );
                 },
@@ -251,35 +259,62 @@ class _AlatListState extends State<AlatList> {
     );
   }
 
-  Widget _buildAlatCard(AlatModel a) {
-    return AlatCard(
-      nama: a.nama,
-      kondisi: a.kondisi ?? '-',
-      unit: 1,
-      image: 'assets/alat/placeholder.png',
-      imageUrl: a.foto,
+  Widget _buildCard(Map<String, dynamic> item) {
+    final kategori = item['kategori'] as KategoriModel;
+    final alatCount = item['alat_count'] as int;
+
+    return KategoriCard(
+      nama: kategori.nama,
+      keterangan: kategori.keterangan ?? '',
+      jumlahAlat: alatCount,
       onEdit: () async {
         final updated = await Navigator.of(context).push<bool>(
           MaterialPageRoute(
-            builder: (_) => AlatFormScreen(alat: a),
+            builder: (_) => KategoriFormScreen(kategori: kategori),
           ),
         );
-        if (updated == true && mounted) _refresh();
+        if (updated == true && mounted) {
+          _refresh();
+        }
       },
       onDelete: () async {
-        final ok = await showConfirmDialog(
-          context,
-          'Hapus alat',
-          'Yakin ingin menghapus alat ini?',
+        if (alatCount > 0) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                  'Kategori ini digunakan oleh $alatCount alat. Hapus alat terlebih dahulu.'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+          return;
+        }
+
+        final ok = await showDialog<bool>(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text('Hapus Kategori'),
+            content: Text('Yakin ingin menghapus kategori "${kategori.nama}"?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Batal'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Hapus', style: TextStyle(color: Colors.red)),
+              ),
+            ],
+          ),
         );
 
         if (ok == true && mounted) {
-          final success = await _serviceAlat.deleteAlat(a.id);
+          final success = await _service.deleteKategori(kategori.id);
           if (mounted) {
             if (success) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Berhasil dihapus'),
+                  content: Text('Kategori berhasil dihapus'),
                   backgroundColor: Colors.green,
                 ),
               );
@@ -287,7 +322,7 @@ class _AlatListState extends State<AlatList> {
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Gagal menghapus'),
+                  content: Text('Gagal menghapus kategori'),
                   backgroundColor: Colors.red,
                 ),
               );
@@ -295,27 +330,7 @@ class _AlatListState extends State<AlatList> {
           }
         }
       },
-    );
-  }
-
-  Future<bool?> showConfirmDialog(
-      BuildContext context, String title, String content) {
-    return showDialog<bool>(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text(title),
-        content: Text(content),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Batal'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Hapus'),
-          ),
-        ],
-      ),
+      onTap: () {},
     );
   }
 }

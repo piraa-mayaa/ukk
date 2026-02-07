@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../../services/service_peminjaman.dart';
+import '../../models/peminjaman_model.dart';
 
 class PersetujuanScreen extends StatefulWidget {
   const PersetujuanScreen({super.key});
@@ -11,51 +13,9 @@ class PersetujuanScreen extends StatefulWidget {
 class _PersetujuanScreenState extends State<PersetujuanScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  String _selectedRole = 'Petugas';
-
-  // Dummy data semua permintaan (bisa diganti dengan API nanti)
-  final List<Map<String, dynamic>> _allRequests = [
-    {
-      'nama': 'Citra Lestari',
-      'inisial': 'CL',
-      'kelas': '12',
-      'alat': 'Tang Amper',
-      'tanggal': DateTime(2026, 1, 12),
-      'status': 'menunggu',
-    },
-    {
-      'nama': 'Citra Lestari',
-      'inisial': 'CL',
-      'kelas': '12',
-      'alat': 'Tang Amper',
-      'tanggal': DateTime(2026, 1, 12),
-      'status': 'disetujui',
-    },
-    {
-      'nama': 'Citra Lestari',
-      'inisial': 'CL',
-      'kelas': '12',
-      'alat': 'Tang Amper',
-      'tanggal': DateTime(2026, 1, 12),
-      'status': 'ditolak',
-    },
-    {
-      'nama': 'Citra Lestari',
-      'inisial': 'CL',
-      'kelas': '12',
-      'alat': 'Tang Amper',
-      'tanggal': DateTime(2026, 1, 12),
-      'status': 'menunggu',
-    },
-    {
-      'nama': 'Citra Lestari',
-      'inisial': 'CL',
-      'kelas': '12',
-      'alat': 'Tang Amper',
-      'tanggal': DateTime(2026, 1, 12),
-      'status': 'disetujui',
-    },
-  ];
+  final ServicePeminjaman _servicePeminjaman = ServicePeminjaman();
+  List<PeminjamanModel> _allRequests = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -64,12 +24,50 @@ class _PersetujuanScreenState extends State<PersetujuanScreen>
     _tabController.addListener(() {
       if (mounted) setState(() {});
     });
+    _fetchRequests();
+  }
+
+  Future<void> _fetchRequests() async {
+    setState(() => _isLoading = true);
+    final requests = await _servicePeminjaman.getAllPeminjaman();
+    setState(() {
+      _allRequests = requests;
+      _isLoading = false;
+    });
   }
 
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  Future<void> _handleApprove(int id) async {
+    final success = await _servicePeminjaman.approvePeminjaman(id);
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Peminjaman disetujui')),
+      );
+      _fetchRequests();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Gagal menyetujui peminjaman')),
+      );
+    }
+  }
+
+  Future<void> _handleReject(int id) async {
+    final success = await _servicePeminjaman.rejectPeminjaman(id);
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Peminjaman ditolak')),
+      );
+      _fetchRequests();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Gagal menolak peminjaman')),
+      );
+    }
   }
 
   @override
@@ -83,7 +81,8 @@ class _PersetujuanScreenState extends State<PersetujuanScreen>
             ? 'disetujui'
             : 'ditolak';
 
-    final filtered = _allRequests.where((r) => r['status'] == currentStatus).toList();
+    final filtered =
+        _allRequests.where((r) => r.status == currentStatus).toList();
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8E1),
@@ -97,15 +96,13 @@ class _PersetujuanScreenState extends State<PersetujuanScreen>
               children: [
                 Row(
                   children: [
-                    // Logo
                     const CircleAvatar(
                       radius: 26,
                       backgroundColor: Colors.white,
-                      child: Icon(Icons.build_circle, color: Color(0xFFFF9800), size: 32),
+                      child: Icon(Icons.build_circle,
+                          color: Color(0xFFFF9800), size: 32),
                     ),
                     const SizedBox(width: 12),
-
-                    // Judul aplikasi
                     const Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,53 +116,14 @@ class _PersetujuanScreenState extends State<PersetujuanScreen>
                             ),
                           ),
                           Text(
-                            'Teknik Pembangkit',
-                            style: TextStyle(color: Colors.white70, fontSize: 13),
+                            'Persetujuan Peminjaman',
+                            style:
+                                TextStyle(color: Colors.white70, fontSize: 13),
                           ),
                         ],
                       ),
                     ),
-
-                    // Notifikasi & Role
-                    const Icon(Icons.notifications, color: Colors.white),
-                    const SizedBox(width: 16),
-                    DropdownButton<String>(
-                      value: _selectedRole,
-                      icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
-                      underline: const SizedBox(),
-                      items: const [
-                        DropdownMenuItem(value: 'Admin', child: Text('Admin')),
-                        DropdownMenuItem(value: 'Petugas', child: Text('Petugas')),
-                      ],
-                      onChanged: (val) {
-                        if (val != null) setState(() => _selectedRole = val);
-                      },
-                      dropdownColor: Colors.white,
-                      style: const TextStyle(color: Colors.black87),
-                    ),
                   ],
-                ),
-
-                const SizedBox(height: 12),
-
-                // Greeting
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.25),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.waving_hand, color: Colors.white, size: 18),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Selamat datang, $_selectedRole',
-                        style: const TextStyle(color: Colors.white, fontSize: 14),
-                      ),
-                    ],
-                  ),
                 ),
               ],
             ),
@@ -174,9 +132,18 @@ class _PersetujuanScreenState extends State<PersetujuanScreen>
           // Judul halaman
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: const Text(
-              'Persetujuan',
-              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Persetujuan',
+                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                ),
+                IconButton(
+                  onPressed: _fetchRequests,
+                  icon: const Icon(Icons.refresh),
+                ),
+              ],
             ),
           ),
 
@@ -197,21 +164,23 @@ class _PersetujuanScreenState extends State<PersetujuanScreen>
 
           // Konten Tab
           Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                _buildList(filtered, dateFormat),
-                _buildList(filtered, dateFormat),
-                _buildList(filtered, dateFormat),
-              ],
-            ),
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildList(filtered, dateFormat),
+                      _buildList(filtered, dateFormat),
+                      _buildList(filtered, dateFormat),
+                    ],
+                  ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildList(List<Map<String, dynamic>> requests, DateFormat dateFormat) {
+  Widget _buildList(List<PeminjamanModel> requests, DateFormat dateFormat) {
     if (requests.isEmpty) {
       return const Center(
         child: Text(
@@ -226,11 +195,11 @@ class _PersetujuanScreenState extends State<PersetujuanScreen>
       itemCount: requests.length,
       itemBuilder: (context, index) {
         final req = requests[index];
-        final status = req['status'] as String;
+        final status = req.status;
 
         Color cardBg = Colors.orange.shade50;
         Color accent = Colors.orange;
-        String actionText = 'Disetujui';
+        String actionText = req.statusLabel;
 
         if (status == 'menunggu') {
           cardBg = const Color(0xFFFFF3E0);
@@ -243,10 +212,13 @@ class _PersetujuanScreenState extends State<PersetujuanScreen>
           accent = Colors.red;
         }
 
+        final inisial = req.namaPeminjam?.substring(0, 1).toUpperCase() ?? '?';
+
         return Card(
           color: cardBg,
           margin: const EdgeInsets.only(bottom: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           elevation: 1,
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -260,7 +232,7 @@ class _PersetujuanScreenState extends State<PersetujuanScreen>
                       radius: 26,
                       backgroundColor: accent.withOpacity(0.2),
                       child: Text(
-                        req['inisial'],
+                        inisial,
                         style: TextStyle(
                           color: accent,
                           fontSize: 16,
@@ -274,15 +246,16 @@ class _PersetujuanScreenState extends State<PersetujuanScreen>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            req['nama'],
+                            req.namaPeminjam ?? 'Unknown',
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           Text(
-                            '${req['kelas']} • ${dateFormat.format(req['tanggal'])}',
-                            style: TextStyle(color: Colors.grey[700], fontSize: 13),
+                            'ID Peminjaman: ${req.id} • ${dateFormat.format(req.tanggalPinjam)}',
+                            style: TextStyle(
+                                color: Colors.grey[700], fontSize: 13),
                           ),
                         ],
                       ),
@@ -292,25 +265,40 @@ class _PersetujuanScreenState extends State<PersetujuanScreen>
 
                 const SizedBox(height: 16),
 
-                // Nama alat
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          req['alat'],
-                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                // Daftar alat
+                const Text(
+                  'Alat yang dipinjam:',
+                  style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueGrey),
+                ),
+                const SizedBox(height: 8),
+                ...?req.details?.map((detail) => Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.devices,
+                                size: 16, color: Colors.blueGrey),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                detail.namaAlat ?? 'Alat tidak dikenal',
+                                style: const TextStyle(
+                                    fontSize: 14, fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      Icon(Icons.arrow_forward_ios_rounded, size: 16, color: accent),
-                    ],
-                  ),
-                ),
+                    )),
 
                 const SizedBox(height: 20),
 
@@ -320,25 +308,23 @@ class _PersetujuanScreenState extends State<PersetujuanScreen>
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       OutlinedButton(
-                        onPressed: () {
-                          // TODO: tolak permintaan
-                        },
+                        onPressed: () => _handleReject(req.id),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.red,
                           side: const BorderSide(color: Colors.red),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
                         ),
                         child: const Text('Tolak'),
                       ),
                       const SizedBox(width: 12),
                       ElevatedButton(
-                        onPressed: () {
-                          // TODO: setujui permintaan
-                        },
+                        onPressed: () => _handleApprove(req.id),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFFF9800),
                           foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
                         ),
                         child: const Text('Setuju'),
                       ),
@@ -348,7 +334,8 @@ class _PersetujuanScreenState extends State<PersetujuanScreen>
                   Align(
                     alignment: Alignment.centerRight,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
                       decoration: BoxDecoration(
                         color: accent,
                         borderRadius: BorderRadius.circular(12),
